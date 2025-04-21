@@ -56,6 +56,7 @@ I’m transitioning from web development into **data analysis**, and this repo i
 - 🧪 Learning by doing — not just watching
 - 🔍 Passionate about turning data into decisions
 - 📍 Remote, flexible, and always learning </br>
+
 📫 Reach out: [SimranRayaitWork@gmail.com](mailto:simranrayaitwork@gmail.com)  
 🌐 Portfolio & projects: [GitHub/SimranRayait51](https://github.com/SimranRayait51)
 
