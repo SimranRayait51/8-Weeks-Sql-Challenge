@@ -11,21 +11,11 @@ This repository will grow week by week as I work through each case study — sol
 > 📚 Whether you're a fellow learner or just browsing — welcome aboard and feel free to follow along!
 
 ---
-
-## 🚀 Why I'm Taking This Challenge
-
-As someone transitioning into data analytics, this challenge is the perfect way to:
-- 🛠️ Practice real-world SQL
-- 🔍 Develop analytical thinking
-- 💼 Explore practical business scenarios
-- 📁 Build a strong, project-based portfolio
-
----
 ## 🧩 Case Studies
 
-| Case Study | Industry        | Focus Areas                                | Status        | Link |
+| Case Study | Industry        | Focus Areas                                | Status        | Readme |
 |------------|------------------|---------------------------------------------|----------------|------|
-| 1 - Danny's Diner     | Hospitality     | Sales trends, customer behavior            | 🔒 Not Started |  |
+| 1 - Danny's Diner     | Hospitality     | Sales trends, customer behavior            | ✅ Started |[Readme](https://github.com/SimranRayait51/8-Weeks-Sql-Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/readme.md) |
 | 2 - Pizza Runner      | Food Delivery   | Delivery performance, data cleaning        | 🔒 Not Started ||
 | 3 - Foodie-Fi         | Subscriptions   | Customer journeys, churn, revenue analysis | 🔒 Not Started |  |
 | 4 - Data Bank         | Digital Banking | Product usage, user segmentation           | 🔒 Not Started | |
@@ -35,9 +25,19 @@ As someone transitioning into data analytics, this challenge is the perfect way 
 | 8 - Fresh Segments    | Marketing       | Customer segmentation, targeting           | 🔒 Not Started | |
 
 ---
+## 🚀 Why I'm Taking This Challenge
+
+As someone transitioning into data analytics, this challenge is the perfect way to:
+- 🛠️ Practice real-world SQL
+- 🔍 Develop analytical thinking
+- 💼 Explore practical business scenarios
+- 📁 Build a strong, project-based portfolio
+
+---
+
 ## 🛠️ Tools I’m Using
 
-- 🐘 **PostgreSQL** (Locally installed) for SQL queries
+- 🐘 **PostgreSQL and DB Fiddle** - for SQL queries
 - 📝 **Markdown** – for case documentation
 - 💻 **GitHub** – to track progress and build a shareable portfolio
 
