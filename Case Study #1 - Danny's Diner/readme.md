@@ -7,7 +7,7 @@ __⭕[Entity Relationship Diagram](#Entity-Relationship-Diagram)__</br>
 __⭕[Tools Used](#tools-used)__</br>
 __⭕[Challenge and Response](#Challenge-and-Response)__</br>
 ___
-## 📍 Problem Statement
+## 📍Problem Statement
  Danny wants to use the data to answer following Questions
   - Customers visiting Patterns.
   - Total Expenditure by Customers.
@@ -26,12 +26,12 @@ ___
 ![Screenshot 2025-04-21 180820](https://github.com/user-attachments/assets/27083917-c916-4260-9316-90054ddd3543)
 
 ____
-## 🛠️ Tools Used
+## 🛠️Tools Used
 - 🐘 **PostgreSQL and DB-Fiddle** for SQL queries
 - 📝 **Markdown** – for case documentation
 ___
 
- ## 📍 Challenge and Response
+ ## 📍Challenge and Response
 
 __1. What is the total amount each customer spent at the restaurant?__
 
