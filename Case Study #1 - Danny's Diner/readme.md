@@ -62,3 +62,30 @@ order by total_spent asc;
 |A|	76|
 
 _____________
+
+__2. How many days has each customer visited the restaurant?__
+
+  ***Steps Taken***
+- Used `customer_id` and `order_date` from table `sales`.
+- Used **Count** to count the `Days Visited` by customers.
+- Used **Distinct** to count the unique visits as there were multiple orders.
+- User **Group and Order by** to aggregate the result and order them in ascending order.
+  
+***Solution***
+```sql
+select customer_id ,
+count( distinct order_date) as Days_Visited
+from sales
+group by customer_id
+order by customer_id;
+```
+***Output***
+
+|customer_id|	days_visited|
+|-----|------|
+|A|	4|
+|B|	6|
+|C	|2|
+
+_____________
+
