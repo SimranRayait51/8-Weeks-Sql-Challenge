@@ -89,3 +89,45 @@ order by customer_id;
 
 _____________
 
+__3. What was the first item from the menu purchased by each customer?__
+
+  ***Steps Taken***
+- Used a **JOIN** between `sales` table and `menu` table.
+  - `sales` table contains `customer_id` and `order_date`.
+  - `menu` table contains `product_name`.
+- Used **Dense_Rank()** window function in the select command - so if a customer ordered multiple items on the same first date, all are shown.( As only date is given not timestamp)
+  - Partition the data by customer_id so that the ranking is done for each individual customer.
+  - Order the results by order_date to ensure that the earliest order gets the rank of 1.
+  - This will allow customers who ordered multiple items on the same day to receive the same rank.
+- In the WHERE clause, filter the results to only include rows where rank = 1, which represents the first order for each customer.
+- Retrieved the customer_id and product_name for each first purchase.
+  
+***Solution***
+```sql
+select 
+summary.customer_id,
+summary.product_name
+from(
+  select 
+  s.customer_id,
+  m.product_name,
+  dense_rank() over
+  (partition by s.customer_id order by s.order_date) As Rnk
+  from sales s 
+  join menu m
+  on 
+  s.product_id=m.product_id)
+  as summary
+where Rnk=1;
+```
+***Output***
+
+|customer_id	|product_name|
+|-----------|------------|
+|A|	curry|
+|A|	sushi|
+|B|	curry|
+|C	|ramen|
+|C	|ramen|
+
+__________________________________
