@@ -444,3 +444,56 @@ order by
 
 _______________________________________________
 
+### 🧿 Bonus Questions
+__Join All The Things Recreate the table__
+
+**Solution :**
+```sql
+select
+	s.customer_id,
+    s.order_date,
+    m.product_name,
+    m.price,
+    (case
+     	when mem.join_date > s.order_date then 'N'
+     	when mem.join_date <= s.order_date then 'Y'
+     	else 'N'
+     end) as members
+from
+	sales s
+join
+	menu m
+on
+	s.product_id = m.product_id
+ left join
+ 	members mem
+on
+	s.customer_id = mem.customer_id
+ order by 
+  s.customer_id,	s.order_date
+```
+
+**Output :**
+
+| customer_id | order_date | product_name | price | members |
+|-------------|------------|--------------|-------|---------|
+| A           | 2021-01-01 | sushi        | 10    | N       |
+| A           | 2021-01-01 | curry        | 15    | N       |
+| A           | 2021-01-07 | curry        | 15    | Y       |
+| A           | 2021-01-10 | ramen        | 12    | Y       |
+| A           | 2021-01-11 | ramen        | 12    | Y       |
+| A           | 2021-01-11 | ramen        | 12    | Y       |
+| B           | 2021-01-01 | curry        | 15    | N       |
+| B           | 2021-01-02 | curry        | 15    | N       |
+| B           | 2021-01-04 | sushi        | 10    | N       |
+| B           | 2021-01-11 | sushi        | 10    | Y       |
+| B           | 2021-01-16 | ramen        | 12    | Y       |
+| B           | 2021-02-01 | ramen        | 12    | Y       |
+| C           | 2021-01-01 | ramen        | 12    | N       |
+| C           | 2021-01-01 | ramen        | 12    | N       |
+| C           | 2021-01-07 | ramen        | 12    | N       |
+
+_________
+
+
+
