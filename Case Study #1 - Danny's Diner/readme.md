@@ -258,3 +258,51 @@ where
 
 ____________________
 
+__7.Which item was purchased just before the customer became a member?__
+
+  ***Steps Taken***
+- Used a **JOIN** between `sales` table , `menu` table and `members ` table.
+  - `sales` table contains `customer_id` ,  `order_date` and `product_id` .
+  - `menu` table contains `product_name`.
+  - `members` table contains `join_date`.
+- Used **Row_number()** window function , partitioned by `customer_id` and order by ` order_date ` in **desc** order as it gave the recent date .
+- Used `where order_date < join_date ` to filter out the orders that were placed after the `join_date`.
+- Used `rn=1` to get first order purchased by the members.
+  
+***Solution***
+```sql
+select
+	rm.customer_id,
+    rm.product_name,
+    rm.order_date
+from
+	(select 
+	mem.customer_id,
+    s.order_date,
+    m.product_name,
+    row_number() over
+    (partition by mem.customer_id order by s.order_date desc) As rn
+from
+	members mem
+join
+	sales s 
+on
+	mem.customer_id = s.customer_id
+join
+	menu m
+on 
+	s.product_id = m.product_id
+where 
+	s.order_date < mem.join_date) as rm
+    where rn=1;
+
+
+```
+***Output***
+
+|customer_id|	product_name|	order_date|
+|----------------|-----------|-----------|
+|A|	sushi|	2021-01-01|
+|B|	sushi	|2021-01-04|
+
+_______________________________________________
