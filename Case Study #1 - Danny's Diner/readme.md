@@ -166,3 +166,47 @@ order by
 
 __________________________________
 
+__5.Which item was the most popular for each customer?__
+
+  ***Steps Taken***
+- Used a **JOIN** between `sales` table and `menu` table.
+  - `sales` table contains `customer_id` and  `product_id`.
+  - `menu` table contains `product_name`.
+- Used **Count** for getting the No of purchase of particular order.
+- Used **Row_number()** window function , partitioned by `customer_id` and order by `purchase count ` in **desc** order.
+- Used `rn=1` to get top ranked product per customer.
+  
+***Solution***
+```sql
+select 
+	ranked.customer_id,
+	ranked.product_name
+from
+	(select 
+     s.customer_id,
+	 m.product_name,
+	 count(s.product_id) as purchase_count,
+	 row_number() over 
+     (partition by s.customer_id order by count(s.product_id)desc ) as rn
+from
+	sales s
+join 
+     menu m
+on s.product_id=m.product_id
+group by
+     s.customer_id , m.product_name
+order by 
+     s.customer_id) as ranked
+where 
+	rn=1
+```
+***Output***
+
+|customer_id	|product_name|
+|-----|------|
+|A	|ramen|
+|B|	ramen|
+|C	|ramen|
+
+__________________________________
+
