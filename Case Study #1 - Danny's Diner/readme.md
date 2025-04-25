@@ -166,7 +166,7 @@ order by
 
 __________________________________
 
-__5.Which item was the most popular for each customer?__
+__5. Which item was the most popular for each customer?__
 
   ***Steps Taken***
 - Used a **JOIN** between `sales` table and `menu` table.
@@ -209,7 +209,7 @@ where
 |C	|ramen|
 
 __________________________________
-__6.Which item was purchased first by the customer after they became a member?__
+__6. Which item was purchased first by the customer after they became a member?__
 
   ***Steps Taken***
 - Used a **JOIN** between `sales` table , `menu` table and `members ` table.
@@ -258,7 +258,7 @@ where
 
 ____________________
 
-__7.Which item was purchased just before the customer became a member?__
+__7. Which item was purchased just before the customer became a member?__
 
   ***Steps Taken***
 - Used a **JOIN** between `sales` table , `menu` table and `members ` table.
@@ -307,7 +307,7 @@ where
 
 _______________________________________________
 
-__8.What is the total items and amount spent for each member before they became a member?__
+__8. What is the total items and amount spent for each member before they became a member?__
 
   ***Steps Taken***
 - Used a **JOIN** between `sales` table , `menu` table and `members ` table.
@@ -348,6 +348,46 @@ order by
 |----|-------|-----|
 |A|	25	|2|
 |B|	40	|3|
+
+_______________________________________________
+__9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier - how many points would each customer have?__
+
+  ***Steps Taken***
+- Used a **JOIN** between `sales` table and `menu` table.
+  - `sales` table contains `customer_id`  and `product_id` .
+  - `menu` table contains `price` and `product_name`.
+- Used **sum** to calculate the total points.
+- Used **case** for checking condition that is - if sushi then points is 2x otherwise 10.
+- Grouped and Ordered By `Customer_id`.
+  
+***Solution***
+```sql
+select
+	s.customer_id,
+    sum(
+      case
+      	when m.product_name='sushi' then m.price*20
+      	else m.price*10
+      	end) as Total_Points
+from
+ 	sales s
+join
+	menu m
+on	
+	s.product_id=m.product_id
+group by
+	s.customer_id
+order by		
+	s.customer_id
+
+```
+***Output***
+
+|customer_id	|total_points|
+|----------|----------|
+|A|	860|
+|B	|940|
+|C|	360|
 
 _______________________________________________
 
