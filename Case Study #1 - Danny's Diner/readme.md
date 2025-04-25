@@ -306,3 +306,48 @@ where
 |B|	sushi	|2021-01-04|
 
 _______________________________________________
+
+__8.What is the total items and amount spent for each member before they became a member?__
+
+  ***Steps Taken***
+- Used a **JOIN** between `sales` table , `menu` table and `members ` table.
+  - `sales` table contains `customer_id` ,  `order_date` and `product_id` .
+  - `menu` table contains `price`.
+  - `members` table contains `join_date`.
+- Used **sum** on `price` from `menu` table to calculate the total sales amount.
+- Used **Count** on `product_id` from `sales` table to count the number of items purchased.
+- Used `where order_date < join_date ` to filter the orders before the joining of members.
+- Grouped and Ordered By `Customer_id`.
+  
+***Solution***
+```sql
+select 
+	mem.customer_id,
+    sum(m.price) as Sales,
+    count(s.product_id) as Items
+from
+	members mem
+join 
+	sales s
+on
+	mem.customer_id=s.customer_id
+join
+	menu m
+on
+	s.product_id = m.product_id
+where
+	s.order_date < mem.join_date
+group by
+	mem.customer_id
+order by 
+	mem.customer_id
+```
+***Output***
+
+|customer_id|	sales|	items|
+|----|-------|-----|
+|A|	25	|2|
+|B|	40	|3|
+
+_______________________________________________
+
