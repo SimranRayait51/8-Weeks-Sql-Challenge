@@ -390,4 +390,57 @@ order by
 |C|	360|
 
 _______________________________________________
+__10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January ?__
+
+  ***Steps Taken***
+- Used a **JOIN** between `sales` table , `menu` table and `members` table .
+  - `sales` table contains `customer_id`  and `order_date` .
+  - `menu` table contains `price` and `product_name`.
+  - `members` table contains `join_date`.
+- Used **sum** to calculate the total points.
+- Used **case** for checking condition that is
+  - if sushi than 2x.
+  - if the `order_date` is between the week from `join_date` than 2x.
+  - else 10 points.
+- Grouped and Ordered By `Customer_id`.
+- Used `where order_date  < 31 jan ` for filtering the orders before 31 jan
+  
+***Solution***
+```sql
+select 
+	s.customer_id,
+	sum(case 
+        	when m.product_name = 'sushi' then m.price*20
+        	when s.order_date between mem.join_date and mem.join_date + interval '7 day' 
+        	then m.price*20
+        else
+        	m.price*10
+        end) as Points
+from
+	sales s
+ join
+ 	menu m
+ on
+ 	s.product_id=m.product_id
+join
+	members mem
+on
+	s.customer_id=mem.customer_id
+where
+	s.order_date < '2021-01-31'
+group by
+	s.customer_id
+order by
+	s.customer_id
+
+```
+***Output***
+
+|customer_id|	points|
+|------------|-----------|
+|A|	1370|
+|B	|940|
+
+
+_______________________________________________
 
