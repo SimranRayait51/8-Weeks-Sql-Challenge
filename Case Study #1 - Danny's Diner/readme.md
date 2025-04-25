@@ -131,3 +131,38 @@ where Rnk=1;
 |C	|ramen|
 
 __________________________________
+__4. What is the most purchased item on the menu and how many times was it purchased by all customers?__
+
+  ***Steps Taken***
+- Used a **JOIN** between `sales` table and `menu` table.
+  - `sales` table contains `customer_id`.
+  - `menu` table contains `product_name`.
+- Used **Count** to count the total occurrence of the item.
+- Grouped using the `product_name` and ordered by `no_of_purchase` in desc order.
+- Used `Limit=1` to get only the top item.
+  
+***Solution***
+```sql
+select
+ m.product_name,
+ count(s.product_id) As No_of_purchase
+from
+ menu m
+join
+ sales s
+on m.product_id=s.product_id
+group by
+ m.product_name
+order by
+  no_of_purchase desc 
+ limit 1
+```
+***Output***
+
+|product_name|	no_of_purchase|
+|-----|-----|
+|ramen	|8|
+
+
+__________________________________
+
