@@ -9,6 +9,7 @@ __⭕[Entity Relationship Diagram](#Entity-Relationship-Diagram)__</br>
 __⭕[Tools Used](#tools-used)__</br>
 __⭕[Challenge and Response](#Challenge-and-Response)__
   - [Data Cleaning and Transformation](#Data-Cleaning-and-Transformation)
+  - [A. Pizza Metrics](#Pizza-Metrics)
     
 ______
 
@@ -103,3 +104,67 @@ from runner_orders;
   ```
 
 __________
+
+### ✔️ A. Pizza Metrics 
+
+__1. How many pizzas were ordered?__
+
+  ***Steps Taken***
+- Used a **count** on `pizza_id` from **temp** table `cust_clean` to get the count of total no of pizza's ordered.
+  
+***Solution***
+```sql
+select 
+	count(pizza_id) as No_of_orders
+from
+	cust_clean; 
+```
+***Output***
+
+
+|no_of_orders|
+|------|
+|14|
+
+_________
+
+__2. How many unique customer orders were made?__
+
+  ***Steps Taken***
+- Used a **Distinct** and **count** on `order_id` from **temp** table `cust_clean` to get the Unique no of customers orders.
+  
+***Solution***
+```sql
+select
+ count(distinct order_id) as unique_orders
+ from
+ cust_clean
+```
+***Output***
+
+
+|unique_orders|
+|---------|
+|10|
+
+_____________
+__2. How many unique customer orders were made?__
+
+  ***Steps Taken***
+- Used a **Distinct** and **count** on `order_id` from **temp** table `cust_clean` to get the Unique no of customers orders.
+  
+***Solution***
+```sql
+select
+ count(distinct order_id) as unique_orders
+ from
+ cust_clean
+```
+***Output***
+
+
+|unique_orders|
+|---------|
+|10|
+
+_____________
