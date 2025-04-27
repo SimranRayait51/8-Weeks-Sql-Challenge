@@ -15,8 +15,8 @@ This repository will grow week by week as I work through each case study — sol
 
 | Case Study | Industry        | Focus Areas                                | Status        | Readme |
 |------------|------------------|---------------------------------------------|----------------|------|
-| 1 - Danny's Diner     | Hospitality     | Sales trends, customer behavior            | ✅ Started |[Readme](https://github.com/SimranRayait51/8-Weeks-Sql-Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/readme.md) |
-| 2 - Pizza Runner      | Food Delivery   | Delivery performance, data cleaning        | 🔒 Not Started ||
+| 1 - Danny's Diner     | Hospitality     | Sales trends, customer behavior            | ✅ Completed |[Readme](https://github.com/SimranRayait51/8-Weeks-Sql-Challenge/blob/main/Case%20Study%20%231%20-%20Danny's%20Diner/readme.md) |
+| 2 - Pizza Runner      | Food Delivery   | Delivery performance, data cleaning        |🔓 Started |[Readme](https://github.com/SimranRayait51/8-Weeks-Sql-Challenge/blob/main/Case%20Study%20%232%20-%20Pizza%20Runner/Readme.md#Data-Cleaning-and-Transformation)|
 | 3 - Foodie-Fi         | Subscriptions   | Customer journeys, churn, revenue analysis | 🔒 Not Started |  |
 | 4 - Data Bank         | Digital Banking | Product usage, user segmentation           | 🔒 Not Started | |
 | 5 - Data Mart         | Retail          | Sales, growth, key metrics                 | 🔒 Not Started |  |
