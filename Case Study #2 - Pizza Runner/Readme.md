@@ -148,23 +148,140 @@ select
 |10|
 
 _____________
-__2. How many unique customer orders were made?__
+__3. How many successful orders were delivered by each runner?__
 
   ***Steps Taken***
-- Used a **Distinct** and **count** on `order_id` from **temp** table `cust_clean` to get the Unique no of customers orders.
+- Used  `runner_id` from **temp** table `runner_clean` to get the runners.
+- Used **Count** on `duration` as delivered orders are counted as successful orders.
+- used condition `where` to check if the distance travelled by runner is greater than 0
+- used `group` and `order by` on `runner_id`
   
 ***Solution***
 ```sql
-select
- count(distinct order_id) as unique_orders
- from
- cust_clean
+select 
+	runner_id,
+	count(duration) as No_of_orders
+from 
+	runner_clean
+	where duration >'0'
+	group by runner_id
+	order by runner_id
 ```
 ***Output***
 
 
-|unique_orders|
-|---------|
-|10|
+
+|runner_id|	no_of_orders|
+|----------|--------------|
+|1	|4|
+|2|	3|
+|3	|1|
 
 _____________
+__4. How many of each type of pizza was delivered?__
+
+  ***Steps Taken***
+- Used **Join** between `cust_clean` ,`runner_clean` and `pizza_names`.
+  	- `cust_clean` contains the `pizza_id` .
+  	- `pizza_names` contains `pizza_name`.
+  	- `runner_clean` contains the `duration` for getting the sucessfull orders.
+  
+***Solution***
+```sql
+
+select c.pizza_id,
+n.pizza_name,
+count(r.duration) as delivered_pizzas
+from
+cust_clean c
+join
+pizza_names n
+on
+c.pizza_id = n.pizza_id
+join
+runner_clean r
+on c.order_id = r.order_id
+where duration > '0'
+group by n.pizza_name , c.pizza_id
+```
+***Output***
+
+
+
+|pizza_id|	pizza_name|	delivered_pizzas|
+|----|-------|-------|
+|1|	Meatlovers|	9|
+|2|	Vegetarian|	3|
+
+
+_____________
+
+__5. How many Vegetarian and Meatlovers were ordered by each customer?__
+
+  ***Steps Taken***
+- Used **Join** between `cust_clean` and `pizza_names`.
+  	- `cust_clean` contains  `pizza_id` and `customer_id`.
+  	- `pizza_names` contains `pizza_name`.
+- Grouped by `customer_id` and `pizza_name`.
+- ordered by `customer_id`.
+***Solution***
+```sql
+
+select c.customer_id,
+n.pizza_name,
+count(c.pizza_id) as No_of_orders
+from
+cust_clean c
+join
+pizza_names n
+on 
+c.pizza_id = n.pizza_id
+group by c.customer_id, n.pizza_name
+order by c.customer_id
+```
+***Output***
+|customer_id	|pizza_name|	no_of_orders|
+|------------|----------|------------|
+|101	|Meatlovers	|2|
+|101|	Vegetarian|	1|
+|102	|Meatlovers	|2|
+|102	|Vegetarian	|1|
+|103	|Meatlovers	|3|
+|103	|Vegetarian	|1|
+|104	|Meatlovers	|3|
+|105	|Vegetarian	|1|
+
+
+________________________
+
+__6. What was the maximum number of pizzas delivered in a single order?__
+
+  ***Steps Taken***
+- Used **Join** on `cust_clean` and `runner_clean`.
+- Used `cust_clean` temp table as it contains `order_id` and `pizza_Id`.
+- Used `runner_clean` temp table as it contains `duration`.
+- Used `order by` on `total_orders` in desc order.
+- Used `limit=1` to get the max orders.
+***Solution***
+```sql
+select c.order_id,
+count(c.pizza_id) as total_orders
+from 
+cust_clean c
+join
+runner_clean r
+on c.order_id=r.order_id
+where r.duration > '0'
+group by c.order_id
+order by total_orders desc
+limit 1
+```
+***Output***
+
+|order_id|	total_orders|
+|------------|-----------|
+|4	|3|
+
+_____________________________________________________
+
+
