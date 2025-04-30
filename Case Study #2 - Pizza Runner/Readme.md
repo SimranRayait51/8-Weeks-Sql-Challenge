@@ -10,6 +10,7 @@ __⭕[Tools Used](#tools-used)__</br>
 __⭕[Challenge and Response](#Challenge-and-Response)__
   - [Data Cleaning and Transformation](#Data-Cleaning-and-Transformation)
   - [A. Pizza Metrics](#Pizza-Metrics)
+  - [B. Runner and Customer Experience](#Runner-and-Customer-Experience)
     
 ______
 
@@ -62,7 +63,8 @@ case
 case 
 	when extras is null or extras = 'null' then ' '
     else  extras
-    end as extras
+    end as extras,
+order_time
 from customer_orders;
 ```
 #### 🗃️ Table : runner_orders
@@ -163,7 +165,7 @@ select
 	count(duration) as No_of_orders
 from 
 	runner_clean
-	where duration >'0'
+	where distance >'0'
 	group by runner_id
 	order by runner_id
 ```
@@ -184,7 +186,7 @@ __4. How many of each type of pizza was delivered?__
 - Used **Join** between `cust_clean` ,`runner_clean` and `pizza_names`.
   	- `cust_clean` contains the `pizza_id` .
   	- `pizza_names` contains `pizza_name`.
-  	- `runner_clean` contains the `duration` for getting the sucessfull orders.
+  	- `runner_clean` contains the `distance` for getting the sucessfull orders.
   
 ***Solution***
 ```sql
@@ -201,7 +203,7 @@ c.pizza_id = n.pizza_id
 join
 runner_clean r
 on c.order_id = r.order_id
-where duration > '0'
+where distance > '0'
 group by n.pizza_name , c.pizza_id
 ```
 ***Output***
@@ -259,7 +261,7 @@ __6. What was the maximum number of pizzas delivered in a single order?__
   ***Steps Taken***
 - Used **Join** on `cust_clean` and `runner_clean`.
 - Used `cust_clean` temp table as it contains `order_id` and `pizza_Id`.
-- Used `runner_clean` temp table as it contains `duration`.
+- Used `runner_clean` temp table as it contains `distance`.
 - Used `order by` on `total_orders` in desc order.
 - Used `limit=1` to get the max orders.
 ***Solution***
@@ -271,7 +273,7 @@ cust_clean c
 join
 runner_clean r
 on c.order_id=r.order_id
-where r.duration > '0'
+where r.distance > '0'
 group by c.order_id
 order by total_orders desc
 limit 1
@@ -284,4 +286,147 @@ limit 1
 
 _____________________________________________________
 
+__7. For each customer, how many delivered pizzas had at least 1 change and how many had no changes?__
 
+  ***Steps Taken***
+- Used **Join** on `cust_clean` and `runner_clean`.
+- Used `cust_clean` temp table as it contains `exclusions` and `extra` which will dictate the changes.
+- Used `runner_clean` temp table as it contains `distance` which will filters out the delivered pizzas .
+- Used `order by` on `customer_id` .
+***Solution***
+```sql
+select 
+  c.customer_id,
+  sum (
+    case 
+     when exclusions ='' and extras =''
+     then 1 
+     else 0 
+    end ) as no_change,
+  sum (
+    case 
+     when exclusions != ''  or extras != '' 
+     then 1 
+     else 0 
+    end) as changes
+from 
+	cust_clean c
+join 
+	runner_clean r
+	on c.order_id = r.order_id
+where
+	r.distance > '0'
+group by 
+	c.customer_id
+order by 
+	c.customer_id
+
+```
+***Output***
+
+| customer_id | no_change | changes |
+|-------------|-----------|---------|
+| 101         | 2         | 0       |
+| 102         | 3         | 0       |
+| 103         | 0         | 3       |
+| 104         | 1         | 2       |
+| 105         | 0         | 1       |
+
+
+_____________________________________________________
+__8. How many pizzas were delivered that had both exclusions and extras?__
+
+  ***Steps Taken***
+- Used **Join** on `cust_clean` and `runner_clean`.
+- Used `cust_clean` temp table as it contains `Pizza_id`.
+- Used **count** for counting the pizza id's .
+- Used **Where** to filter out the deliverd pizzas and to find the pizza with both `exclusions` and `extras` .
+***Solution***
+```sql
+select 
+	count(c.pizza_id) as Pizza
+from
+	cust_clean c
+join
+	runner_clean r
+	on c.order_id = r.order_id
+where 
+	(r.distance > '0') 
+    and (c.exclusions != '' and c.extras !='') ;
+
+
+```
+***Output***
+
+
+|pizza|
+|-----|
+|1|
+_____________________________________________________
+
+__9. What was the total volume of pizzas ordered for each hour of the day?__
+
+  ***Steps Taken***
+- Used **extract** as hour to get the hour from  `order_time`.
+- Used **count** for counting the pizza id's .
+***Solution***
+```sql
+
+select
+extract(hour from order_time) as Order_hours,
+count(pizza_id) as pizza_count
+from cust_clean
+group by order_hours
+order by order_hours
+
+```
+***Output***
+
+
+| order_hours | pizza_count |
+|-------------|-------------|
+| 11          | 1           |
+| 13          | 3           |
+| 18          | 3           |
+| 19          | 1           |
+| 21          | 3           |
+| 23          | 3           |
+
+_____________________________________________________
+__10. What was the volume of orders for each day of the week?__
+
+  ***Steps Taken***
+- Used `cust_clean` temp table as it contains `order_id`.
+- Used **extract** as isodow to get the day of the week from  `order_time`.
+- - Used **count** for counting the pizza id's .
+***Solution***
+```sql
+
+select
+extract(isodow from order_time) as day_number,
+count(order_id) as order_count
+from 
+cust_clean
+group by day_number
+order By day_number
+
+​
+
+
+
+
+```
+***Output***
+
+
+| day_number | order_count |
+|------------|-------------|
+| 3          | 5           |
+| 4          | 3           |
+| 5          | 1           |
+| 6          | 5           |
+
+_____________________________________________________
+
+
+## 🏃🏼‍♀️B. Runner and Customer Experience
