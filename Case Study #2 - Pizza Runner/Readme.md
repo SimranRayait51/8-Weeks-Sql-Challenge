@@ -9,8 +9,8 @@ __⭕[Entity Relationship Diagram](#Entity-Relationship-Diagram)__</br>
 __⭕[Tools Used](#tools-used)__</br>
 __⭕[Challenge and Response](#Challenge-and-Response)__
   - [Data Cleaning and Transformation](#Data-Cleaning-and-Transformation)
-  - [A. Pizza Metrics](#A-Pizza-Metrics)
-  - [B. Runner and Customer Experience](#B-Runner-and-Customer-Experience)
+  - [A. Pizza Metrics](#a-pizza_metrics)
+  - [B. Runner and Customer Experience](#b-Runner-and-Customer-Experience)
     
 ______
 
@@ -430,3 +430,33 @@ _____________________________________________________
 
 
 ### 🏃🏼‍♀️B. Runner and Customer Experience
+
+__1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)__
+
+  ***Steps Taken***
+- Used a **count** on `runner_id` from  table `runners` to get the count of total no of runners.
+- Used **date_trunc** as week to round down `registration_date` to week .
+
+
+***Solution***
+```sql
+select
+date_trunc('week' , registration_date) as Week,
+count(runner_id) as runners
+from runners
+group by week
+order by week
+
+
+```
+***Output***
+
+
+| week                     | runners |
+|--------------------------|---------|
+| 2020-12-28 00:00:00+00   | 2       |
+| 2021-01-04 00:00:00+00   | 1       |
+| 2021-01-11 00:00:00+00   | 1       |
+
+_________
+
