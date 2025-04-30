@@ -9,8 +9,8 @@ __⭕[Entity Relationship Diagram](#Entity-Relationship-Diagram)__</br>
 __⭕[Tools Used](#tools-used)__</br>
 __⭕[Challenge and Response](#Challenge-and-Response)__
   - [Data Cleaning and Transformation](#Data-Cleaning-and-Transformation)
-  - [A. Pizza Metrics](#Pizza-Metrics)
-  - [B. Runner and Customer Experience](#Runner-and-Customer-Experience)
+  - [A. Pizza Metrics](#A.-Pizza-Metrics)
+  - [B. Runner and Customer Experience](#B.-Runner-and-Customer-Experience)
     
 ______
 
@@ -429,4 +429,4 @@ order By day_number
 _____________________________________________________
 
 
-## 🏃🏼‍♀️B. Runner and Customer Experience
+### 🏃🏼‍♀️B. Runner and Customer Experience
