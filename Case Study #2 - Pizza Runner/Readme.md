@@ -85,7 +85,7 @@ create temp table runner_clean as
     case 
      when pickup_time is null or pickup_time = 'null' then NULL
      else pickup_time
-    end as pickup_time,
+    end as pickup_time
     case 
      when distance is null or distance ='null' then NUll
      when distance like '%km' then replace(distance , 'km', '')
@@ -315,7 +315,7 @@ select
     end ) as no_change,
   sum (
     case 
-     when exclusions != ''  or extras != '' 
+     when exclusions is not null  or extras is not null
      then 1 
      else 0 
     end) as changes
@@ -362,7 +362,7 @@ join
 	on c.order_id = r.order_id
 where 
 	(r.distance > 0) 
-    and (c.exclusions != '' and c.extras !='') ;
+    and (c.exclusions is not null  and c.extras is not nul) ;
 
 
 ```
@@ -654,6 +654,31 @@ order by
 
 _________
 
+__7.What is the successful delivery percentage for each runner?__
+
+  ***Steps Taken***
+- Used **case** to sum only the delivered orders.
+***Solution***
+```sql
+select
+runner_id ,
+round(100 * sum(
+  case when distance is not null then 1
+  else 0 end) / count(order_id),0)
+from runner_clean
+group by runner_id;
+```
+***Output***
+
+| runner_id | delivery_percentage |
+|-----------|---------------------|
+| 3         | 50                  |
+| 2         | 75                  |
+| 1         | 100               |
+
+
+
+_________
 
 
 
