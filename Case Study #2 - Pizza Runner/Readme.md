@@ -47,9 +47,9 @@ ___
 ### Data Cleaning and Transformation
 #### 🗃️ Table : Customer_orders
 ![image](https://github.com/user-attachments/assets/66a67f3d-5fb4-4fb6-a1bf-1aed39477f31)
-- There is a need to clean the `exclusions` and `extra` column as they consist of **Null** values.
+- There is a need to clean the `exclusions` and `extra` column as they consist of **null** as a values.
 - Used **Temp** table `cust_clean` because it will be stored temporary in the database and we can access it easily.
-- Used **Case** statement to replace the null values with a blank space.
+- Used **Case** statement to replace the null values with a NULL.
 ```sql
 create temp table cust_clean as
 select 
@@ -57,15 +57,16 @@ order_id,
 customer_id,
 pizza_id,
 case
-	when exclusions is null or exclusions ='null' then ' '
+	when exclusions is null or exclusions ='null' then Null
     else exclusions
     end as exclusions,
 case 
-	when extras is null or extras = 'null' then ' '
+	when extras is null or extras = 'null' then NULL
     else  extras
     end as extras,
 order_time
 from customer_orders;
+
 ```
 #### 🗃️ Table : runner_orders
 ![image](https://github.com/user-attachments/assets/fb0749f4-6dcc-45e4-a0ca-a1e443dead93)
@@ -75,23 +76,23 @@ from customer_orders;
     - `duration` column as it contains **null** values and **min** , **mins** , **minute** , **minutes** int the end.
     - `cancellation` column as it contains **null** values.
 - Used **Temp** table `runner_clean` because it will be stored temporary in the database and we can access it easily.
-- Used **Case** statement to replace the null values with a blank space and also for replacing unwanted values.
+- Used **Case** statement to replace the null values with NULL  and also for replacing unwanted values.
 ```sql
 create temp table runner_clean as
 	select
     order_id,
     runner_id,
     case 
-     when pickup_time is null or pickup_time = 'null' then ' '
+     when pickup_time is null or pickup_time = 'null' then NULL
      else pickup_time
     end as pickup_time,
     case 
-     when distance is null or distance ='null' then ' '
+     when distance is null or distance ='null' then NUll
      when distance like '%km' then replace(distance , 'km', '')
      else distance
     end as distance,
     case 
-    when duration is null or duration ='null' then ' '
+    when duration is null or duration ='null' then NULL
     when duration like '%min'  then replace(duration ,'min','')
      when duration like '%mins'  then replace(duration ,'mins','')
      when duration like '%minute'  then replace(duration ,'minute','')
@@ -99,11 +100,20 @@ create temp table runner_clean as
     else duration
     end as duration,
     case
-    when cancellation is null or cancellation ='null' then ' '
+    when cancellation is null or cancellation ='null' then NULL
     else cancellation
     end as cancellation
 from runner_orders;
   ```
+#### 🗃️ Altering Data 
+```sql
+
+ALTER TABLE runner_clean
+  ALTER COLUMN pickup_time TYPE timestamp USING pickup_time::timestamp,
+  ALTER COLUMN distance TYPE float USING distance::float,
+  ALTER COLUMN duration TYPE int USING duration::int,
+  Alter column cancellation type text using cancellation::text;
+```
 
 __________
 
@@ -165,7 +175,7 @@ select
 	count(duration) as No_of_orders
 from 
 	runner_clean
-	where distance >'0'
+	where distance > 0
 	group by runner_id
 	order by runner_id
 ```
@@ -203,7 +213,7 @@ c.pizza_id = n.pizza_id
 join
 runner_clean r
 on c.order_id = r.order_id
-where distance > '0'
+where distance > 0
 group by n.pizza_name , c.pizza_id
 ```
 ***Output***
@@ -273,7 +283,7 @@ cust_clean c
 join
 runner_clean r
 on c.order_id=r.order_id
-where r.distance > '0'
+where r.distance > 0
 group by c.order_id
 order by total_orders desc
 limit 1
@@ -315,7 +325,7 @@ join
 	runner_clean r
 	on c.order_id = r.order_id
 where
-	r.distance > '0'
+	r.distance > 0
 group by 
 	c.customer_id
 order by 
@@ -351,7 +361,7 @@ join
 	runner_clean r
 	on c.order_id = r.order_id
 where 
-	(r.distance > '0') 
+	(r.distance > 0) 
     and (c.exclusions != '' and c.extras !='') ;
 
 
@@ -459,4 +469,193 @@ order by week
 | 2021-01-11 00:00:00+00   | 1       |
 
 _________
+__2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?__
+
+  ***Steps Taken***
+- Used a **round** , **Avg()** , **exract*** , **epoch** as seconds.
+- Used the difference of `pickup_time` and `order_time` to get the actual time taken by the runner to arrive at the headquater after the order was placed .
+- Diveded the extracted seconds with 60 to convert into mintues.
+
+
+***Solution***
+```sql
+select 
+	r1.runner_id,
+  	Round(avg(
+      extract(
+       epoch from (r.pickup_time - c.order_time))/60))
+from
+	runners r1
+ join
+	runner_clean r
+on 
+	r1.runner_id = r.runner_id
+join
+	cust_clean c
+on r.order_id = c.order_id
+group by r1.runner_id
+order by r1.runner_id;
+
+```
+***Output***
+
+
+| runner_id | round |
+|-----------|--------|
+| 1         | 16     |
+| 2         | 24     |
+| 3         | 10     |
+
+
+_________
+__3.Is there any relationship between the number of pizzas and how long the order takes to prepare?__
+
+  ***Steps Taken***
+- Used **Subquery** to count the no of pizzas order and tho get the **average** for preparing pizza.
+- Used No_of_pizza to group by and order by.
+- Relation between the no of pizza and the preparation time is directly propotional as the no of pizza increases the preparation time.
+***Solution***
+```sql
+select 
+	sub.no_of_pizza,
+	avg(time_taken) as time_taken
+from 
+	(select 
+		c.order_id,
+		count(c.pizza_id) as no_of_pizza,
+		avg (r.pickup_time-c.order_time) as time_taken
+	from
+		cust_clean c
+	join 
+		runner_clean r
+	on
+		c.order_id = r.order_id
+ 	group by c.order_id) as sub
+group by 
+	no_of_pizza 
+order by 
+	no_of_pizza;
+
+```
+***Output***
+
+| no_of_pizza | time_taken  |
+|-------------|-------------|
+| 1           | 00:12:21.4  |
+| 2           | 00:18:22.5  |
+| 3           | 00:29:17    |
+
+
+
+_________
+
+__4.What was the average distance travelled for each customer?__
+
+  ***Steps Taken***
+- Used **avg()** on `distance` from `runner_clean` to get the average of the total distance travelled.
+-  Used **Round** to round the decimal places into integer.
+  
+
+***Solution***
+```sql
+select 
+	c.customer_id,
+    round(avg(r.distance)) as distance_travelled
+from
+	cust_clean c
+join
+	runner_clean r
+on
+	c.order_id = r.order_id
+group by
+	c.customer_id
+order by
+ 	c.customer_id;
+
+```
+***Output***
+
+| customer_id | distance_travelled |
+|-------------|--------------------|
+| 101         | 20                 |
+| 102         | 17                 |
+| 103         | 23                 |
+| 104         | 10                 |
+| 105         | 25                 |
+
+
+
+_________
+__5.What was the difference between the longest and shortest delivery times for all orders?__
+
+  ***Steps Taken***
+- Used **min()** and **max()** on `duration` to get the diffrence .
+- Used `where distance is not null` to check if the distance is not null.
+  
+
+***Solution***
+```sql
+select
+	(max(duration) - min(duration)) as Diffrence
+from 
+	runner_clean
+ where
+ 	distance is not null ;
+```
+***Output***
+
+| difference |
+|------------|
+| 30         |
+
+
+
+_________
+__6.What was the average speed for each runner for each delivery and do you notice any trend for these values?__
+
+  ***Steps Taken***
+- Used **avg()** to get the average speed.
+- Used `duration / distance *60 ` to get the speed as the duration is in minutes , multiplied by 60 to get hours.
+- Danny needs to confront runner 2 as there was a significant diffrence in speed from 35km/hr to 93km/hr.
+  
+
+***Solution***
+```sql
+select 
+	c.order_id,
+	r.runner_id,
+	avg(r.distance/ r.duration * 60)  as average_speed
+from
+	cust_clean c
+join
+  runner_clean r
+on
+	c.order_id = r.order_id
+where 
+	r.distance is not null
+group by 
+	c.order_id , r.runner_id , r.distance
+order by 
+	r.runner_id
+```
+***Output***
+
+| order_id | runner_id | average_speed |
+|----------|-----------|---------------|
+| 1        | 1         | 37.5          |
+| 2        | 1         | 44.44444444444444 |
+| 3        | 1         | 40.2          |
+| 10       | 1         | 60            |
+| 4        | 2         | 35.099999999999994 |
+| 7        | 2         | 60            |
+| 8        | 2         | 93.6          |
+| 5        | 3         | 40            |
+
+
+_________
+
+
+
+
+
 
