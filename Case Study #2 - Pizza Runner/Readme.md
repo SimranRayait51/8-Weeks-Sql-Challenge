@@ -681,6 +681,179 @@ group by runner_id;
 _________
 
 
+###  🥗C. Ingredient Optimisation
+
+__1.What are the standard ingredients for each pizza?__
+
+  ***Steps Taken***
+- **Standard Ingredients** means the by default, toppings which comes with the pizza .
+- Used **string_to_array()** function to turn `toppings` from `pizza_recipes` into an array.
+- Used **Unnest()** function to expand the array into rows as toppings
+- Used `pizza_name` from `pizza_names` table , `topping_name` from `pizza_toppings` tables.
+- Used **Join** and converted unnested topping into int.
+***Solution***
+```sql
+select 
+	p.pizza_id,
+	pr.pizza_name,
+	p.toppings,
+	t.topping_name
+from
+	(select
+     	pizza_id,
+		unnest(string_to_array(toppings, ',')) as toppings
+	  from pizza_recipes) 
+      as p
+join 
+	pizza_toppings t 
+on
+	p.toppings::int= t.topping_id
+join
+	pizza_names pr
+on
+	p.pizza_id = pr.pizza_id
+order by
+	p.pizza_id;
+
+```
+***Output***
+
+| pizza_id | pizza_name | toppings | topping_name  |
+|----------|------------|----------|---------------|
+| 1        | Meatlovers | 2        | BBQ Sauce     |
+| 1        | Meatlovers | 8        | Pepperoni     |
+| 1        | Meatlovers | 4        | Cheese        |
+| 1        | Meatlovers | 10       | Salami        |
+| 1        | Meatlovers | 5        | Chicken       |
+| 1        | Meatlovers | 1        | Bacon         |
+| 1        | Meatlovers | 6        | Mushrooms     |
+| 1        | Meatlovers | 3        | Beef          |
+| 2        | Vegetarian | 12       | Tomato Sauce  |
+| 2        | Vegetarian | 4        | Cheese        |
+| 2        | Vegetarian | 6        | Mushrooms     |
+| 2        | Vegetarian | 7        | Onions        |
+| 2        | Vegetarian | 9        | Peppers       |
+| 2        | Vegetarian | 11       | Tomatoes      |
 
 
 
+_________
+
+__2.What was the most commonly added extra?__
+
+  ***Steps Taken***
+- Used **string_to_array()** function to turn `extras` from `cust_clean` into an array.
+- Used **Unnest()** function to expand the array into rows as extra.
+- Used **count** to count the total occurrence of the extra. 
+***Solution***
+```sql
+  
+select
+	r.extra,
+	count(r.extra) as No_of_orders,
+	t.topping_name
+from
+	(select pizza_id,
+ 		unnest(string_to_array(extras, ','))as extra
+	  from cust_clean
+    where extras is not null)  as r
+join
+	pizza_toppings t
+on
+	r.extra::int = t.topping_id
+group by 
+	r. extra  , t.topping_name
+order by
+	r.extra desc
+limit 1
+ 
+ 
+```
+***Output***
+
+| extra | no_of_orders | topping_name |
+|-------|--------------|--------------|
+| 1     | 4            | Bacon        |
+
+
+
+_________
+
+__2.What was the most common exclusion?__
+
+  ***Steps Taken***
+- Used **string_to_array()** function to turn `exclusions` from `cust_clean` into an array.
+- Used **Unnest()** function to expand the array into rows as extra.
+- Used **count** to count the total occurrence of the extra. 
+***Solution***
+```sql
+  
+select
+	e.exclusion,
+	count(e.exclusion) as No_of_orders,
+	t.topping_name
+from
+	(select pizza_id,
+ 		unnest(string_to_array(exclusions, ','))as exclusion
+	  from cust_clean
+    where exclusions is not null)  as e
+join
+	pizza_toppings t
+on
+	e.exclusion::int = t.topping_id
+group by 
+	e.exclusion  , t.topping_name
+order by
+	e.exclusion desc
+limit 1
+ 
+ 
+```
+***Output***
+
+| exclusion | no_of_orders | topping_name |
+|-----------|--------------|--------------|
+| 4         | 4            | Cheese       |
+
+
+
+_________
+__3. What was the most common exclusion?__
+
+  ***Steps Taken***
+- Used **string_to_array()** function to turn `exclusions` from `cust_clean` into an array.
+- Used **Unnest()** function to expand the array into rows as extra.
+- Used **count** to count the total occurrence of the extra. 
+***Solution***
+```sql
+  
+select
+	e.exclusion,
+	count(e.exclusion) as No_of_orders,
+	t.topping_name
+from
+	(select pizza_id,
+ 		unnest(string_to_array(exclusions, ','))as exclusion
+	  from cust_clean
+    where exclusions is not null)  as e
+join
+	pizza_toppings t
+on
+	e.exclusion::int = t.topping_id
+group by 
+	e.exclusion  , t.topping_name
+order by
+	e.exclusion desc
+limit 1
+ 
+ 
+```
+***Output***
+
+| exclusion | no_of_orders | topping_name |
+|-----------|--------------|--------------|
+| 4         | 4            | Cheese       |
+
+
+
+_________
