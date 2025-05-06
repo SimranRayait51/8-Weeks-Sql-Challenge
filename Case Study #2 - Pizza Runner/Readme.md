@@ -857,3 +857,79 @@ limit 1
 
 
 _________
+__4.Generate an order item for each record in the customers_orders table in the format of one of the following:
+Meat Lovers
+Meat Lovers - Exclude Beef
+Meat Lovers - Extra Bacon
+Meat Lovers - Exclude Cheese, Bacon - Extra Mushroom, Peppers__
+
+  ***Steps Taken***
+- Used **case** to check if `exclusions ` or `extras` is not empty .
+- Used `||` to concatenate the non empty values with **exclude -** and **extra  -**.
+- Used **string_agg** for merging topping names in a single row.
+- Used **Unnest** to expand `exclusions` and `extras` into rows and joind it with pizza_toppings for getting names of the toppings.
+
+***Solution***
+```sql
+  
+SELECT 
+    c.order_id,
+    pn.pizza_name ||
+    (CASE 
+        WHEN c.exclusions != '' THEN 
+            ' exclude - ' || (
+                SELECT 
+                    string_agg(t.topping_name, ',')
+                FROM
+                    unnest(string_to_array(c.exclusions, ',')) AS excludes
+                JOIN
+                    pizza_toppings t 
+                ON
+                    excludes::int = t.topping_id
+            )
+        ELSE ''
+     END) ||
+    (CASE 
+        WHEN c.extras != '' THEN 
+            ' extra - ' || (
+                SELECT 
+                    string_agg(t.topping_name, ',')
+                FROM
+                    unnest(string_to_array(c.extras, ',')) AS extras
+                JOIN
+                    pizza_toppings t 
+                ON
+                    extras::int = t.topping_id
+            )
+        ELSE ''
+     END) AS Information
+FROM
+    cust_clean c
+JOIN
+    pizza_names pn ON c.pizza_id = pn.pizza_id
+ORDER BY 
+    c.order_id;
+
+ 
+```
+***Output***
+
+| order_id | information                                             |
+|----------|----------------------------------------------------------|
+| 1        | Meatlovers                                               |
+| 2        | Meatlovers                                               |
+| 3        | Vegetarian                                               |
+| 3        | Meatlovers                                               |
+| 4        | Meatlovers exclude - Cheese                              |
+| 4        | Meatlovers exclude - Cheese                              |
+| 4        | Vegetarian exclude - Cheese                              |
+| 5        | Meatlovers extra - Bacon                                 |
+| 6        | Vegetarian                                               |
+| 7        | Vegetarian extra - Bacon                                 |
+| 8        | Meatlovers                                               |
+| 9        | Meatlovers exclude - Cheese extra - Bacon,Chicken        |
+| 10       | Meatlovers                                               |
+| 10       | Meatlovers exclude - BBQ Sauce,Mushrooms extra - Bacon,Cheese |
+
+
+_________
